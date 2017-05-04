@@ -25,7 +25,7 @@ public class SavingsAccount {
 	private BigDecimal accountBalance;
 	
 	
-	@OneToMany(mappedBy = "savingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "savingsAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<SavingTransaction> savingsTransaction;
 	
