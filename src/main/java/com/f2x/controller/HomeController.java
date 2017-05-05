@@ -1,5 +1,6 @@
 package com.f2x.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -7,10 +8,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.f2x.domain.User;
+import com.f2x.service.UserService;
 
 @Controller
 public class HomeController {
 
+	@Autowired
+	private UserService userService;
+	
+	
 	@RequestMapping("/")
 	public String home(){
 		return "redirect:/index.html"; //this was redirect:/index and issue 505 appear, i do 
@@ -33,10 +39,25 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="/signup", method = RequestMethod.POST)
-	public void singupPost(@ModelAttribute("user") User user,  Model model){
+	public String singupPost(@ModelAttribute("user") User user,  Model model){
 		
+		if(userService.checkUserExists(user.getUserName(), user.getEmail())){
+			
+			if(userService.checkEmailExists(user.getEmail())){
+				model.addAttribute("emailExists", true);
+			}
+			if(userService.checkUsernameExists(user.getUserName())){
+				model.addAttribute("userNameExists", true);
+			}
+		
+			return "signup";
+			
+		}else{
+			userService.saveUser(user);
+			return "redirect:/";
+		}
+		
+	
 	}
-	
-	
-	
+
 }
