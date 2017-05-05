@@ -94,7 +94,7 @@ public class SavingTransaction {
 
 	public SavingTransaction(Date date, String description, String type, String status, double amount,
 			BigDecimal availableBalance, SavingsAccount savingsAccount) {
-		super();
+		
 		this.date = date;
 		this.description = description;
 		this.type = type;

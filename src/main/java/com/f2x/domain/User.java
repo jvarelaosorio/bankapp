@@ -1,6 +1,9 @@
 package com.f2x.domain;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,23 +15,34 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.f2x.domain.security.Authority;
+import com.f2x.domain.security.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class User {
+public class User implements UserDetails{
+	/**
+	 * 
+	 */
+	
 	@Id
 	@Column(name = "userId", nullable = false, updatable = false) 
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long userId;
-	private String userName;
+	private String username;
 	private String password;
 	private String firstName;
 	private String lastName;
 	
+	
 	@Column(name = "email", nullable = false, updatable = true)
 	private String email;
 	private String phone;
-	private Boolean enable=true;
+	
+	private Boolean enabled=true;
 	
 	@OneToOne
 	private PrimaryAccount primaryAccount;
@@ -40,18 +54,31 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Recipient> recipients;
 	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonIgnore
+	private Set<UserRole> userRoles = new HashSet<>();
 	
+	
+	
+	public Set<UserRole> getUserRoles() {
+		return userRoles;
+	}
+	public void setUserRoles(Set<UserRole> userRoles) {
+		this.userRoles = userRoles;
+	}
 	public Long getUserId() {
 		return userId;
 	}
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
-	public String getUserName() {
-		return userName;
+	
+	
+	public String getUsername() {
+		return username;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	public String getPassword() {
 		return password;
@@ -83,11 +110,11 @@ public class User {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public Boolean getEnable() {
-		return enable;
+	public Boolean getEnabled() {
+		return enabled;
 	}
 	public void setEnable(Boolean enable) {
-		this.enable = enable;
+		this.enabled = enable;
 	}
 	public PrimaryAccount getPrimaryAccount() {
 		return primaryAccount;
@@ -115,10 +142,40 @@ public class User {
 	}
 	@Override
 	public String toString() {
-		return "user [userId=" + userId + ", userName=" + userName + ", password=" + password + ", firstName="
-				+ firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", enable=" + enable
+		return "user [userId=" + userId + ", username=" + username + ", password=" + password + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", enabled=" + enabled
 				+ "]";
 	}
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		Set<GrantedAuthority> authorities = new HashSet<>();
+		userRoles.forEach(ur -> authorities.add(new Authority(ur.getRole().getName())));
+		return authorities;
+		
+	}
+	
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return enabled;
+	}
+	
+	
 	
 	
 }
