@@ -1,6 +1,9 @@
 package com.f2x.service;
 
+import java.util.Set;
+
 import com.f2x.domain.User;
+import com.f2x.domain.security.UserRole;
 
 public interface UserService {
 
@@ -12,4 +15,6 @@ public interface UserService {
 	boolean checkEmailExists(String email);
 	
 	void saveUser (User user);
+	
+	User createUser(User user, Set<UserRole> userRoles);
 }
