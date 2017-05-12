@@ -30,7 +30,7 @@ public class HomeController {
 	
 	@RequestMapping("/")
 	public String home(){
-		return "redirect:/index.html"; //this was redirect:/index and issue 505 appear, i do 
+		return "redirect:/index"; //this was redirect:/index and issue 505 appear, i do 
 		//not why. so after of reading a little bit i realized that redirect must be implemented 
 		//when is a path or complete URL, this was a mistake of coding. Resolved.
 	}
